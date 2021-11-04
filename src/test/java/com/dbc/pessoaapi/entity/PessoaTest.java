@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PessoaTest {
     @Test
     public void testLombok() {
-        var pessoa = new PessoaEntity();
+        PessoaEntity pessoa = new PessoaEntity();
         pessoa.setNome("Maicon");
         pessoa.setIdPessoa(1);
         pessoa.setDataNascimento(LocalDate.of(1991,9,8));
