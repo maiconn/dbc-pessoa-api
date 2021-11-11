@@ -5,6 +5,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class PessoaDTO {
@@ -25,5 +26,5 @@ public class PessoaDTO {
     @NotNull
     private String email;
 
-    private DadosPessoaisDTO dadosPessoaisDTO;
+    private List<ContatoDTO> contatosList;
 }

@@ -4,6 +4,8 @@ import com.dbc.pessoaapi.client.DadosPessoaisClient;
 import com.dbc.pessoaapi.dto.DadosPessoaisDTO;
 import com.dbc.pessoaapi.dto.PessoaCreateDTO;
 import com.dbc.pessoaapi.dto.PessoaDTO;
+import com.dbc.pessoaapi.entity.PessoaEntity;
+import com.dbc.pessoaapi.repository.PessoaRepository;
 import com.dbc.pessoaapi.service.PessoaService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,7 @@ import java.util.List;
 public class PessoaController {
     private final PessoaService pessoaService;
     private final DadosPessoaisClient dadosPessoaisClient;
+    private final PessoaRepository pessoaRepository;
 
 //    public PessoaController(PessoaService pessoaService){
 //        this.pessoaService = pessoaService;
@@ -87,4 +89,36 @@ public class PessoaController {
     public List<DadosPessoaisDTO> listarDadosPessoais() {
         return dadosPessoaisClient.listar();
     }
+
+    @GetMapping("/find-by-Nome")
+    public List<PessoaEntity> findByNome(@RequestParam String nome) { //?nome=Misfjoaif
+        return pessoaRepository.findByNome(nome);
+    }
+
+    @GetMapping("/find-by-nome-containing-ignorecase")
+    public List<PessoaEntity> findByNomeContainingIgnoreCase(@RequestParam String nome) { //?nome=Misfjoaif
+        return pessoaRepository.findByNomeContainingIgnoreCase(nome); //%nome%
+    }
+
+    @GetMapping("/find-by-cpf")
+    public PessoaEntity findByCpf(@RequestParam String nome) { //?nome=Misfjoaif
+        return pessoaRepository.findByCpf(nome); //%nome%
+    }
+
+    @GetMapping("/procurar-por-cpf-jpql")
+    public PessoaEntity procurarPorCpf(@RequestParam String cpf) {
+        return pessoaRepository.procurarPorCpf(cpf);
+    }
+
+    @GetMapping("/procurar-pessoas-com-contatos")
+    public List<PessoaEntity> procurarPessoasComContatos() {
+        return pessoaRepository.procurarPessoasComContatos();
+    }
+
+    @GetMapping("/procurar-por-qualquer-nome")
+    public List<PessoaEntity> getPorQualquerNome(@RequestParam String nome) {
+        return pessoaRepository.getPorQualquerNome("%" + nome.toUpperCase() + "%");
+    }
+
+
 }

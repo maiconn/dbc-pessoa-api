@@ -27,7 +27,7 @@ public class EnderecoController {
     @PutMapping("/{id}")
     public EnderecoEntity update(@PathVariable("id") Integer id,
                                  @RequestBody EnderecoEntity enderecoEntity) throws Exception {
-        return enderecoService.update(id, enderecoEntity);
+        return enderecoService.update(enderecoEntity);
     }
 
     @GetMapping
@@ -35,10 +35,10 @@ public class EnderecoController {
         return enderecoService.list();
     }
 
-    @GetMapping("/{idPessoa}/pessoa")
-    public List<EnderecoEntity> listByIdPessoa(@PathVariable("idPessoa") Integer idPessoa) {
-        return enderecoService.listByIdPessoa(idPessoa);
-    }
+//    @GetMapping("/{idPessoa}/pessoa")
+//    public List<EnderecoEntity> listByIdPessoa(@PathVariable("idPessoa") Integer idPessoa) {
+//        return enderecoService.listByIdPessoa(idPessoa);
+//    }
 
     @GetMapping("/{idEndereco}")
     public EnderecoEntity findById(@PathVariable("idEndereco") Integer id) throws Exception {

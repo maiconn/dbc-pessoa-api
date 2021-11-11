@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
-@SpringBootTest
+//@SpringBootTest
 class PessoaApiApplicationTests {
 
 	@Autowired
@@ -20,7 +20,7 @@ class PessoaApiApplicationTests {
 //		emailService.enviarEmailSimples();
 //		emailService.enviarEmailComAnexos();
 //		emailService.enviarEmailComTemplate();
-		emailServiceAula.enviarEmailComTemplateAndAnexos();
+//		emailServiceAula.enviarEmailComTemplateAndAnexos();
 	}
 
 }

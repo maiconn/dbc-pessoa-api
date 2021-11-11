@@ -1,68 +1,68 @@
 package com.dbc.pessoaapi.repository;
 
 import com.dbc.pessoaapi.entity.PessoaEntity;
-import org.apache.commons.lang3.StringUtils;
+import com.dbc.pessoaapi.service.PessoaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Repository
-public class PessoaRepository {
-    private static List<PessoaEntity> listaPessoaEntities = new ArrayList<>();
-    private AtomicInteger COUNTER = new AtomicInteger();
+public interface PessoaRepository extends JpaRepository<PessoaEntity, Integer> {
+    List<PessoaEntity> findByNome(String nome);
+    PessoaEntity findByCpf(String cpf);
+    List<PessoaEntity> findByNomeContainingIgnoreCase(String nome);
 
-    public PessoaRepository() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //18/10/2020
-        listaPessoaEntities.add(new PessoaEntity(COUNTER.incrementAndGet() /*1*/, "Maicon Gerardi", LocalDate.parse("10/10/1990", formatter), "12345678910", "maicon.gerardi@dbccompany.com.br"));
-        listaPessoaEntities.add(new PessoaEntity(COUNTER.incrementAndGet() /*2*/, "Charles Pereira", LocalDate.parse("08/05/1985", formatter), "12345678911", "maicon.gerardi@dbccompany.com.br"));
-        listaPessoaEntities.add(new PessoaEntity(COUNTER.incrementAndGet() /*3*/, "Marina Oliveira", LocalDate.parse("30/03/1970", formatter), "12345678912", "maicon.gerardi@dbccompany.com.br"));
-    }
+    @Query("select p " +
+            " from PESSOA p " +
+            "where p.cpf = ?1 ")
+    PessoaEntity procurarPorCpf(String cpf);
 
-    public PessoaEntity create(PessoaEntity pessoaEntity) {
-        pessoaEntity.setIdPessoa(COUNTER.incrementAndGet());
-        listaPessoaEntities.add(pessoaEntity);
-        return pessoaEntity;
-    }
+    @Query("select p from PESSOA p " +
+            " where p.cpf = :meuCpf " +
+            "   and p.nome = :nome ")
+    PessoaEntity procurarPorCpfParam(@Param("meuCpf") String cpf, String nome);
 
-    public List<PessoaEntity> list() {
-        return listaPessoaEntities;
-    }
+    @Query("select p from PESSOA p where p.cpf = :meuCpf")
+    PessoaEntity procurarPorCpfParamNomeIgual(String meuCpf);
 
-    public PessoaEntity update(Integer id,
-                               PessoaEntity pessoaEntityAtualizar) throws Exception {
-        PessoaEntity pessoaEntityRecuperada = listaPessoaEntities.stream()
-                .filter(pessoa -> pessoa.getIdPessoa().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new Exception("Pessoa não econtrada"));
-        pessoaEntityRecuperada.setCpf(pessoaEntityAtualizar.getCpf());
-        pessoaEntityRecuperada.setNome(pessoaEntityAtualizar.getNome());
-        pessoaEntityRecuperada.setDataNascimento(pessoaEntityAtualizar.getDataNascimento());
-        return pessoaEntityRecuperada;
-    }
+    @Query("select p " +
+            " from PESSOA p " +
+            " join p.contatos c ")
+    List<PessoaEntity> procurarPessoasComContatos();
 
-    public void delete(Integer id) throws Exception {
-        PessoaEntity pessoaEntityRecuperada = listaPessoaEntities.stream()
-                .filter(pessoa -> pessoa.getIdPessoa().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new Exception("Pessoa não econtrada"));
-        listaPessoaEntities.remove(pessoaEntityRecuperada);
-    }
+    @Query(value = "select * " +
+            "         from VEM_SER.PESSOA p " +
+            "   inner join VEM_SER.CONTATO c on (p.id_pessoa = c.id_pessoa)", nativeQuery = true)
+    List<PessoaEntity> procurarPessoasComContatosNativo();
 
-    public List<PessoaEntity> listByName(String nome) {
-        return listaPessoaEntities.stream()
-                .filter(pessoa -> StringUtils.containsAnyIgnoreCase(pessoa.getNome(), nome.toUpperCase()))
-                .collect(Collectors.toList());
-    }
 
-    public PessoaEntity getById(Integer id) throws Exception {
-        return listaPessoaEntities.stream()
-                .filter(pessoa -> pessoa.getIdPessoa().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new Exception("Pessoa não econtrada"));
-    }
+    @Query("select count(p) " +
+            " from PESSOA p " +
+            " left join p.contatos c ")
+    Long countProcurarPessoasComContatos();
+
+    @Query(value = "select * from VEM_SER.PESSOA where cpf = :cpf", nativeQuery = true)
+    PessoaEntity getByCpfNativo(String cpf);
+
+    @Query(value = "select * from VEM_SER.PESSOA where upper(nome) like upper(:nome)", nativeQuery = true)
+    List<PessoaEntity> getPorQualquerNome(String nome);
+
+
+    @Query(value = "select p from PESSOA p where upper(p.nome) like upper(?1)")
+    Page<PessoaEntity> findByNomeJPQL(String nome, Pageable pageable);
+
+    @Query(value = "select * " +
+            "         from PESSOA" +
+            "        where upper(nome) like upper(:nome)",
+            countQuery = "select count(*) " +
+                    "         from PESSOA" +
+                    "        where upper(nome) like upper(:nome)",
+            nativeQuery = true)
+    Page<PessoaEntity> findByNomeNativo(String nome, Pageable pageable);
+
 }

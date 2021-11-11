@@ -2,7 +2,9 @@ package com.dbc.pessoaapi.controller;
 
 
 import com.dbc.pessoaapi.entity.ContatoEntity;
+import com.dbc.pessoaapi.repository.ContatoRepository;
 import com.dbc.pessoaapi.service.ContatoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/contato")
+@RequiredArgsConstructor
 public class ContatoController {
-    @Autowired
-    private ContatoService contatoService;
+    private final ContatoService contatoService;
+    private final ContatoRepository repository;
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Long id) throws Exception {
@@ -36,23 +39,23 @@ public class ContatoController {
         return contatoService.list();
     }
 
-    // {{url}}/contato/1/pessoa
-    @GetMapping("/{idPessoa}/pessoa")
-    public List<ContatoEntity> listByIdPessoa(@PathVariable("idPessoa") Integer idPessoa) {
-        return contatoService.listByIdPessoa(idPessoa);
-    }
+//    // {{url}}/contato/1/pessoa
+//    @GetMapping("/{idPessoa}/pessoa")
+//    public List<ContatoEntity> listByIdPessoa(@PathVariable("idPessoa") Integer idPessoa) {
+//        return contatoService.listByIdPessoa(idPessoa);
+//    }
+//
+//    // {{url}}/contato/1/contato
+//    @GetMapping("/{idContato}/contato")
+//    public ContatoEntity listByIdContato(@PathVariable("idContato") Integer idContato) throws Exception {
+//        return contatoService.listByIdContato(idContato);
+//    }
 
-    // {{url}}/contato/1/contato
-    @GetMapping("/{idContato}/contato")
-    public ContatoEntity listByIdContato(@PathVariable("idContato") Integer idContato) throws Exception {
-        return contatoService.listByIdContato(idContato);
-    }
-
-    // {{url}}/contato/list-by-pessoas?idPessoa=1&nome=Maicon Machado
-    @GetMapping("/list-by-pessoas")
-    public List<ContatoEntity> listByIdPessoaRequestParam(@RequestParam("idPessoa") Integer id,
-                                                          @RequestParam("nome") String nome) {
-        System.out.println(nome);
-        return contatoService.listByIdPessoa(id);
-    }
+//    // {{url}}/contato/list-by-pessoas?idPessoa=1&nome=Maicon Machado
+//    @GetMapping("/list-by-pessoas")
+//    public List<ContatoEntity> listByIdPessoaRequestParam(@RequestParam("idPessoa") Integer id,
+//                                                          @RequestParam("nome") String nome) {
+//        System.out.println(nome);
+//        return contatoService.listByIdPessoa(id);
+//    }
 }

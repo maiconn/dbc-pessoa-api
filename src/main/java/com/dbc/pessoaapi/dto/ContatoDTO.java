@@ -1,5 +1,6 @@
 package com.dbc.pessoaapi.dto;
 
+import com.dbc.pessoaapi.entity.TipoContato;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ public class ContatoDTO {
     private Integer idPessoa;
     @Size(max = 1)
     @NotNull
-    private Integer tipoContato;
+    private TipoContato tipoContato;
     private String numero;
     private String descricao;
 }
