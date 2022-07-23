@@ -1,4 +1,0 @@
-INSERT INTO VEM_SER.PESSOA(ID_PESSOA, NOME, DATA_NASCIMENTO, CPF, EMAIL)VALUES(VEM_SER.seq_pessoa2.nextval, 'Maicon Machado Gerardi', TO_DATE('08-09-1991', 'dd-mm-yyyy'), '48863250090', 'maicon.gerardi@dbccompany.com.br');
-INSERT INTO VEM_SER.PESSOA(ID_PESSOA, NOME, DATA_NASCIMENTO, CPF, EMAIL)VALUES(VEM_SER.seq_pessoa2.nextval, 'Pedro Dantas', TO_DATE('08-09-1980', 'dd-mm-yyyy'), '29629873036', 'pedro@dbccompany.com.br');
-INSERT INTO VEM_SER.PESSOA(ID_PESSOA, NOME, DATA_NASCIMENTO, CPF, EMAIL)VALUES(VEM_SER.seq_pessoa2.nextval, 'Bruna Da Silva', TO_DATE('06-01-1991', 'dd-mm-yyyy'), '01468462067', 'bruna@dbccompany.com.br');
-INSERT INTO VEM_SER.PESSOA(ID_PESSOA, NOME, DATA_NASCIMENTO, CPF, EMAIL)VALUES(VEM_SER.seq_pessoa2.nextval, 'Fernanda Rosa', TO_DATE('06-05-1970', 'dd-mm-yyyy'), '01468462067', 'fernanda@dbccompany.com.br');

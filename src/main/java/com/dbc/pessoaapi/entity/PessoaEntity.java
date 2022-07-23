@@ -4,44 +4,50 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
-
-// @Data // @Getter @Setter @ToString @EqualsAndHashCode @RequiredArgsConstructor
+@Entity(name = "PESSOA")
 @Getter
 @Setter
-@Entity(name="PESSOA")
-public class PessoaEntity implements Serializable {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class PessoaEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PESSOA_SEQUENCIA")
-    @SequenceGenerator(name = "PESSOA_SEQUENCIA", sequenceName = "seq_pessoa2", allocationSize = 1)
-    @Column(name = "id_pessoa")
+    @SequenceGenerator(name = "PESSOA_SEQ", sequenceName = "seq_pessoa2", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PESSOA_SEQ")
+    @Column(name = "ID_PESSOA")
     private Integer idPessoa;
 
-    @Column(name="nome")
-    private String nome; //findByNome
+    @Column(name = "NOME")
+    private String nome;
 
-    @Column(name="data_nascimento")
-    private LocalDate dataNascimento; //findByDataNascimento
+    @Column(name = "DATA_NASCIMENTO")
+    private LocalDate dataNascimento;
 
-    @Column(name="cpf")
+    @Column(name = "CPF")
     private String cpf;
 
-    @Column(name="email")
+    @Column(name = "EMAIL")
     private String email;
 
-    @OneToMany(mappedBy = "pessoaEntity", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "pessoa",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<ContatoEntity> contatos;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "Pessoa_X_Pessoa_Endereco",
-            joinColumns = @JoinColumn(name = "id_pessoa"),
-            inverseJoinColumns = @JoinColumn(name = "id_endereco")
+    @JoinTable(name = "Pessoa_X_Pessoa_Endereco",
+            joinColumns = @JoinColumn(name="id_pessoa"),
+            inverseJoinColumns = @JoinColumn(name="id_endereco")
     )
     private Set<EnderecoEntity> enderecos;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_pet", referencedColumnName = "id_pet")
+    private PetEntity pet;
 }

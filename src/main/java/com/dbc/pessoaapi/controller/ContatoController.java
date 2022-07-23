@@ -1,61 +1,55 @@
 package com.dbc.pessoaapi.controller;
 
-
-import com.dbc.pessoaapi.entity.ContatoEntity;
-import com.dbc.pessoaapi.repository.ContatoRepository;
+import com.dbc.pessoaapi.documentation.ContatoDocumentation;
+import com.dbc.pessoaapi.dto.contato.ContatoCreateDTO;
+import com.dbc.pessoaapi.dto.contato.ContatoDTO;
+import com.dbc.pessoaapi.exception.EntidadeNaoEncontradaException;
+import com.dbc.pessoaapi.exception.RegraDeNegocioException;
 import com.dbc.pessoaapi.service.ContatoService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/contato")
-@RequiredArgsConstructor
-public class ContatoController {
-    private final ContatoService contatoService;
-    private final ContatoRepository repository;
+public class ContatoController implements ContatoDocumentation {
+    @Autowired
+    private ContatoService contatoService;
 
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") Long id) throws Exception {
+
+    @PostMapping("/{idPessoa}")
+    public ResponseEntity<ContatoDTO> post(@PathVariable("idPessoa") Integer id,
+                                             @RequestBody @Valid ContatoCreateDTO contato) throws RegraDeNegocioException, EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(contatoService.create(id, contato));
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<ContatoDTO>>  get() {
+        return ResponseEntity.ok(contatoService.list());
+    }
+
+
+    @PutMapping("/{idContato}")
+    public ResponseEntity<ContatoDTO> put(@PathVariable("idContato") Integer id,
+                          @RequestBody @Valid ContatoCreateDTO contatoAtualizado) throws RegraDeNegocioException, EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(contatoService.update(id, contatoAtualizado));
+    }
+
+
+    @DeleteMapping("/{idContato}")
+    public void delete(@PathVariable("idContato") Integer id) throws RegraDeNegocioException, EntidadeNaoEncontradaException {
         contatoService.delete(id);
     }
 
-    @PostMapping("/{idPessoa}")
-    public ContatoEntity create(@PathVariable("idPessoa") Integer idPessoa,
-                                @RequestBody ContatoEntity contatoEntity) throws Exception {
-        return contatoService.create(idPessoa, contatoEntity);
+
+    @GetMapping("/{idPessoa}")
+    public ResponseEntity<List<ContatoDTO>> getByPersonId(@PathVariable("idPessoa") Integer id) throws EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(contatoService.listByPersonId(id));
     }
-
-    @PutMapping("/{id}")
-    public ContatoEntity update(@PathVariable("id") Integer id,
-                                @RequestBody ContatoEntity contatoEntity) throws Exception {
-        return contatoService.update(id, contatoEntity);
-    }
-
-    @GetMapping
-    public List<ContatoEntity> list() {
-        return contatoService.list();
-    }
-
-//    // {{url}}/contato/1/pessoa
-//    @GetMapping("/{idPessoa}/pessoa")
-//    public List<ContatoEntity> listByIdPessoa(@PathVariable("idPessoa") Integer idPessoa) {
-//        return contatoService.listByIdPessoa(idPessoa);
-//    }
-//
-//    // {{url}}/contato/1/contato
-//    @GetMapping("/{idContato}/contato")
-//    public ContatoEntity listByIdContato(@PathVariable("idContato") Integer idContato) throws Exception {
-//        return contatoService.listByIdContato(idContato);
-//    }
-
-//    // {{url}}/contato/list-by-pessoas?idPessoa=1&nome=Maicon Machado
-//    @GetMapping("/list-by-pessoas")
-//    public List<ContatoEntity> listByIdPessoaRequestParam(@RequestParam("idPessoa") Integer id,
-//                                                          @RequestParam("nome") String nome) {
-//        System.out.println(nome);
-//        return contatoService.listByIdPessoa(id);
-//    }
 }

@@ -1,124 +1,101 @@
 package com.dbc.pessoaapi.controller;
 
-import com.dbc.pessoaapi.client.DadosPessoaisClient;
-import com.dbc.pessoaapi.dto.DadosPessoaisDTO;
-import com.dbc.pessoaapi.dto.PessoaCreateDTO;
-import com.dbc.pessoaapi.dto.PessoaDTO;
-import com.dbc.pessoaapi.entity.PessoaEntity;
-import com.dbc.pessoaapi.repository.PessoaRepository;
+import com.dbc.pessoaapi.config.PropertiesReader;
+import com.dbc.pessoaapi.documentation.PessoaDocumentation;
+import com.dbc.pessoaapi.dto.PageDTO;
+import com.dbc.pessoaapi.dto.pessoa.*;
+import com.dbc.pessoaapi.exception.EntidadeNaoEncontradaException;
+import com.dbc.pessoaapi.service.EmailService;
 import com.dbc.pessoaapi.service.PessoaService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/pessoa")
 @Validated
-@RequiredArgsConstructor
 @Slf4j
-public class PessoaController {
-    private final PessoaService pessoaService;
-    private final DadosPessoaisClient dadosPessoaisClient;
-    private final PessoaRepository pessoaRepository;
-
-//    public PessoaController(PessoaService pessoaService){
-//        this.pessoaService = pessoaService;
-//    }
-
-    @Value("${spring.application.name}")
-    private String name;
-
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        log.trace("A TRACE Message");
-        log.debug("A DEBUG Message");
-        log.info("A INFO Message");
-        log.warn("A WARN Message");
-        log.error("An ERROR Message");
-        return new ResponseEntity<>(name, HttpStatus.ACCEPTED);
-    }
+public class PessoaController implements PessoaDocumentation {
+    @Autowired
+    private PessoaService pessoaService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private PropertiesReader propertiesReader;
 
 
     @PostMapping
-    public PessoaDTO create(@RequestBody @Valid PessoaCreateDTO pessoaDTO) throws Exception {
-        log.info("iniciando criação da pessoa");
-        PessoaDTO pessoaEntityCriado = pessoaService.create(pessoaDTO);
-        log.info("pessoa criada com sucesso!");
-        return pessoaEntityCriado;
+    public ResponseEntity<PessoaDTO> post(@Valid @RequestBody PessoaCreateDTO pessoa) {
+        return ResponseEntity.ok(pessoaService.create(pessoa));
     }
 
-    @ApiOperation(value = "Lista todas as pessoas")
-    @GetMapping
-    public List<PessoaDTO> list() {
-        return pessoaService.list();
+
+    @GetMapping // localhost:8080/pessoa
+    public ResponseEntity<PageDTO<PessoaDTO>> get(@RequestParam(required = false, defaultValue = "0") Integer pagina,
+                                                  @RequestParam(required = false, defaultValue = "20") Integer tamanhoDasPaginas) {
+        return ResponseEntity.ok(pessoaService.list(pagina, tamanhoDasPaginas));
     }
 
-    @GetMapping("/{idPessoa}")
-    public PessoaDTO getById(@RequestParam("idPessoa") Integer idPessoa) throws Exception {
-        return pessoaService.getById(idPessoa);
+
+    @PutMapping("/{idPessoa}") // localhost:8080/pessoa/1000
+    public ResponseEntity<PessoaDTO> put(@PathVariable("idPessoa") Integer id,
+                                         @RequestBody @Valid PessoaCreateDTO pessoaAtualizada) throws EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(pessoaService.update(id, pessoaAtualizada));
     }
 
-    @ApiOperation(value = "Atualiza uma nova pessoa com o id informado")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Pessoa atualizada com sucesso!"),
-            @ApiResponse(code = 400, message = "Pessoa com dados inconsistentes"),
-            @ApiResponse(code = 500, message = "Exceção no sistema")
-    })
-    @PutMapping("/{idPessoa}")
-    public PessoaDTO update(@PathVariable("idPessoa") Integer id,
-                            @RequestBody @Valid PessoaCreateDTO pessoaCreateDTO) throws Exception {
-        return pessoaService.update(id, pessoaCreateDTO);
-    }
 
     @DeleteMapping("/{idPessoa}")
-    public void delete(@PathVariable("idPessoa") Integer id) throws Exception {
+    public void delete(@PathVariable("idPessoa") Integer id) throws EntidadeNaoEncontradaException {
         pessoaService.delete(id);
     }
 
-    @GetMapping("/dados-pessoais")
-    public List<DadosPessoaisDTO> listarDadosPessoais() {
-        return dadosPessoaisClient.listar();
+    @GetMapping("/byname")
+    public ResponseEntity<List<PessoaDTO>> getByNome(@RequestParam("nome") String nome) {
+        return ResponseEntity.ok(pessoaService.listByName(nome));
     }
 
-    @GetMapping("/find-by-Nome")
-    public List<PessoaEntity> findByNome(@RequestParam String nome) { //?nome=Misfjoaif
-        return pessoaRepository.findByNome(nome);
+    @GetMapping("/{cpf}/cpf")
+    public ResponseEntity<PessoaDTO> getByCpf(@PathVariable("cpf") String cpf) {
+        return ResponseEntity.ok(pessoaService.returnByCpf(cpf));
     }
 
-    @GetMapping("/find-by-nome-containing-ignorecase")
-    public List<PessoaEntity> findByNomeContainingIgnoreCase(@RequestParam String nome) { //?nome=Misfjoaif
-        return pessoaRepository.findByNomeContainingIgnoreCase(nome); //%nome%
+    @GetMapping("/data-nascimento")
+    public ResponseEntity<List<PessoaDTO>> getBetweenDataNascimento(@RequestParam("data") LocalDate dtInicial, LocalDate dtFinal) {
+        return ResponseEntity.ok(pessoaService.listByDataNascimento(dtInicial, dtFinal));
     }
 
-    @GetMapping("/find-by-cpf")
-    public PessoaEntity findByCpf(@RequestParam String nome) { //?nome=Misfjoaif
-        return pessoaRepository.findByCpf(nome); //%nome%
+    @GetMapping("/lista-com-contatos")
+    public ResponseEntity<List<PessoaComContatoDTO>> getWithContato(@RequestParam(value = "idPessoa", required = false) Integer idPessoa) throws EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(pessoaService.listWithContato(idPessoa));
     }
 
-    @GetMapping("/procurar-por-cpf-jpql")
-    public PessoaEntity procurarPorCpf(@RequestParam String cpf) {
-        return pessoaRepository.procurarPorCpf(cpf);
+    @GetMapping("/lista-com-enderecos")
+    public ResponseEntity<List<PessoaComEnderecoDTO>> getWithEndereco(@RequestParam(value = "idPessoa", required = false) Integer idPessoa) throws EntidadeNaoEncontradaException {
+        return ResponseEntity.ok(pessoaService.listWithEndereco(idPessoa));
     }
 
-    @GetMapping("/procurar-pessoas-com-contatos")
-    public List<PessoaEntity> procurarPessoasComContatos() {
-        return pessoaRepository.procurarPessoasComContatos();
+    @GetMapping("/lista-completa")
+    public ResponseEntity<List<PessoaCompletaDTO>> getComplete(@RequestParam(value = "idPessoa", required = false) Integer idPessoa) {
+        return ResponseEntity.ok(pessoaService.completeList(idPessoa));
     }
 
-    @GetMapping("/procurar-por-qualquer-nome")
-    public List<PessoaEntity> getPorQualquerNome(@RequestParam String nome) {
-        return pessoaRepository.getPorQualquerNome("%" + nome.toUpperCase() + "%");
+    @GetMapping("/relatorio")
+    public ResponseEntity<List<PessoaRelatorioDTO>> getRelatorio(@RequestParam(value = "idPessoa", required = false) Integer idPessoa) {
+        return ResponseEntity.ok(pessoaService.gerarRelatorio(idPessoa));
     }
 
+
+    @Hidden
+    @GetMapping("/ambiente")
+    public String retornarPropertie() {
+        return propertiesReader.getAmbiente();
+    }
 
 }

@@ -24,7 +24,7 @@
                         </div>
                         <div>
                             <br>"Sharing the knowledge is biggest learning" <br> <br>
-                            <br> <br> <b>${nomeUsuario}, ${idade}, ${cidade}</b>
+                            <br> <br> <b>${nome} - ${email}</b>
                             <br>
                         </div>
                     </td>

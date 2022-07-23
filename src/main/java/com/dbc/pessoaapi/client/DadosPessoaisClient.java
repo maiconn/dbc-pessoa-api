@@ -1,6 +1,6 @@
 package com.dbc.pessoaapi.client;
 
-import com.dbc.pessoaapi.dto.DadosPessoaisDTO;
+import com.dbc.pessoaapi.dto.dados.DadosPessoaisDTO;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -8,14 +8,23 @@ import org.springframework.cloud.openfeign.FeignClient;
 
 import java.util.List;
 
-@FeignClient(value="dados-pessoais", url="https://my-application-teste.herokuapp.com")
+@FeignClient(value="dados-pessoais-api", url="https://dados-pessoais-vemserdbc.herokuapp.com")
 @Headers("Content-Type: application/json")
 public interface DadosPessoaisClient {
 
     @RequestLine("GET /dados-pessoais")
-    List<DadosPessoaisDTO> listar();
+    List<DadosPessoaisDTO> getAll();
+
+
+    @RequestLine("POST /dados-pessoais")
+    DadosPessoaisDTO post(DadosPessoaisDTO dadosPessoaisDTO);
+
+    @RequestLine("PUT /dados-pessoais/{cpf}")
+    DadosPessoaisDTO put(@Param("cpf") String cpf, DadosPessoaisDTO dadosPessoaisDTO);
+
+    @RequestLine("DELETE /dados-pessoais/{cpf}")
+    void delete(@Param("cpf") String cpf);
 
     @RequestLine("GET /dados-pessoais/{cpf}")
-    DadosPessoaisDTO getPorCpf(@Param("cpf") String cpf);
-
+    DadosPessoaisDTO get(@Param("cpf") String cpf);
 }

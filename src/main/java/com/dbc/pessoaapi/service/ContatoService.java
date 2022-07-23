@@ -1,50 +1,85 @@
 package com.dbc.pessoaapi.service;
 
+import com.dbc.pessoaapi.dto.contato.ContatoCreateDTO;
+import com.dbc.pessoaapi.dto.contato.ContatoDTO;
 import com.dbc.pessoaapi.entity.ContatoEntity;
 import com.dbc.pessoaapi.entity.PessoaEntity;
-import com.dbc.pessoaapi.exceptions.RegraDeNegocioException;
+import com.dbc.pessoaapi.exception.EntidadeNaoEncontradaException;
+import com.dbc.pessoaapi.exception.RegraDeNegocioException;
 import com.dbc.pessoaapi.repository.ContatoRepository;
-import lombok.RequiredArgsConstructor;
+import com.dbc.pessoaapi.repository.PessoaRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ContatoService {
-    private final ContatoRepository contatoRepository;
-    private final PessoaService pessoaService;
+    @Autowired
+    private PessoaService pessoaService;
+    @Autowired
+    private PessoaRepository pessoaRepository;
+    @Autowired
+    private ContatoRepository contatoRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    public void delete(Long id) throws Exception {
-        ContatoEntity contatoEntity = findById(id.intValue());
-        contatoRepository.delete(contatoEntity);
+    private static final String NOT_FOUND_MESSAGE = "{idContato} não encontrado";
+
+
+    public ContatoDTO create(Integer id, ContatoCreateDTO contatoDto) throws EntidadeNaoEncontradaException {
+        PessoaEntity pessoaEntity = pessoaService.returnPersonById(id);
+        contatoDto.setIdPessoa(id);
+        ContatoEntity contato = retornarEntidade(contatoDto);
+        contato.setPessoa(pessoaEntity);
+        return retornarDTO(contatoRepository.save(contato));
     }
 
-    public ContatoEntity create(Integer idPessoa, ContatoEntity contatoEntity) throws RegraDeNegocioException {
-        PessoaEntity pessoaEntity = pessoaService.findById(idPessoa);
-        contatoEntity.setPessoaEntity(pessoaEntity);
-        return contatoRepository.save(contatoEntity);
+    public List<ContatoDTO> list() {
+        return contatoRepository.findAll().stream()
+                .map(this::retornarDTO)
+                .collect(Collectors.toList());
     }
 
-    public ContatoEntity update(Integer id, ContatoEntity contatoEntity) throws RegraDeNegocioException {
-        ContatoEntity contatoAtualizar = findById(id);
-        contatoAtualizar.setTipoContato(contatoEntity.getTipoContato());
-        contatoAtualizar.setDescricao(contatoEntity.getDescricao());
-        contatoAtualizar.setNumero(contatoEntity.getNumero());
-        return contatoRepository.save(contatoAtualizar);
+    public ContatoDTO update(Integer id, ContatoCreateDTO contatoDto) throws EntidadeNaoEncontradaException {
+        ContatoEntity contatoRecuperado = returnById(id);
+        contatoRecuperado.setIdPessoa(contatoDto.getIdPessoa());
+        contatoRecuperado.setTipoContato(contatoDto.getTipoContato());
+        contatoRecuperado.setTelefone(contatoDto.getTelefone());
+        contatoRecuperado.setDescricao(contatoDto.getDescricao());
+
+        return retornarDTO(contatoRepository.save(contatoRecuperado));
+    }
+
+    public void delete(Integer id) throws RegraDeNegocioException, EntidadeNaoEncontradaException {
+        ContatoEntity contatoRecuperado = returnById(id);
+        contatoRepository.delete(contatoRecuperado);
+    }
+
+    public List<ContatoDTO> listByPersonId(Integer id) throws EntidadeNaoEncontradaException {
+        pessoaService.verificarId(id);
+        return contatoRepository.findAll().stream()
+                .filter(contato -> contato.getIdPessoa().equals(id))
+                .map(this::retornarDTO)
+                .collect(Collectors.toList());
     }
 
 
-    public List<ContatoEntity> list() {
-        return contatoRepository.findAll();
+    // Uteis-----------------------------------------------------------------------
+
+    private ContatoEntity returnById(Integer id) throws EntidadeNaoEncontradaException {
+        return contatoRepository.findById(id).stream()
+                .findFirst()
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(NOT_FOUND_MESSAGE));
     }
 
-//    public List<ContatoEntity> listByIdPessoa(Integer idPessoa) {
-//        return contatoRepository.findAllByPessoa(idPessoa);
-//    }
+    public ContatoEntity retornarEntidade(ContatoCreateDTO dto) {
+        return objectMapper.convertValue(dto, ContatoEntity.class);
+    }
 
-    public ContatoEntity findById(Integer idContato) throws RegraDeNegocioException {
-        return contatoRepository.findById(idContato).orElseThrow(() -> new RegraDeNegocioException("contato não encontrado"));
+    public ContatoDTO retornarDTO(ContatoEntity contatoEntity) {
+        return objectMapper.convertValue(contatoEntity, ContatoDTO.class);
     }
 }

@@ -1,49 +1,57 @@
 package com.dbc.pessoaapi.entity;
 
+import com.dbc.pessoaapi.enums.TipoEndereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@Entity(name = "ENDERECO_PESSOA")
 @Getter
 @Setter
-@Entity(name = "ENDERECO_PESSOA")
+@NoArgsConstructor
+@AllArgsConstructor
 public class EnderecoEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ENDERECO_SEQ")
     @SequenceGenerator(name = "ENDERECO_SEQ", sequenceName = "seq_endereco_contato", allocationSize = 1)
-    @Column(name = "id_endereco")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ENDERECO_SEQ")
+    @Column(name = "ID_ENDERECO")
     private Integer idEndereco;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "tipo")
+//    @Column(name = "ID_PESSOA")
+//    private Integer idPessoa;
+
+    @Column(name = "TIPO")
     private TipoEndereco tipo;
 
-    @Column(name = "logradouro")
+    @Column(name = "LOGRADOURO")
     private String logradouro;
 
-    @Column(name = "numero")
+    @Column(name = "NUMERO")
     private Integer numero;
 
-    @Column(name = "complemento")
+    @Column(name = "COMPLEMENTO")
     private String complemento;
 
-    @Column(name = "cep")
+    @Column(name = "CEP")
     private String cep;
 
-    @Column(name = "cidade")
+    @Column(name = "CIDADE")
     private String cidade;
 
-    @Column(name = "estado")
+    @Column(name = "ESTADO")
     private String estado;
 
-    @Column(name = "pais")
+    @Column(name = "PAIS")
     private String pais;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "enderecos", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "Pessoa_X_Pessoa_Endereco",
+            joinColumns = @JoinColumn(name="id_endereco"),
+            inverseJoinColumns = @JoinColumn(name="id_pessoa")
+    )
     private Set<PessoaEntity> pessoas;
 }
-

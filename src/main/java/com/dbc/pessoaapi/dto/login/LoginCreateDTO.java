@@ -1,0 +1,17 @@
+package com.dbc.pessoaapi.dto.login;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+
+@Data
+public class LoginCreateDTO {
+    @NotNull
+    @Schema(example = "admin")
+    private String login;
+    @NotNull
+    @Schema(example = "123")
+    private String senha;
+}
+
