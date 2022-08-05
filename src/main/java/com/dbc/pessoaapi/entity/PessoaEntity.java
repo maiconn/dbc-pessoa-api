@@ -39,7 +39,7 @@ public class PessoaEntity {
     private Set<ContatoEntity> contatos;
 
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "Pessoa_X_Pessoa_Endereco",
             joinColumns = @JoinColumn(name="id_pessoa"),
             inverseJoinColumns = @JoinColumn(name="id_endereco")
