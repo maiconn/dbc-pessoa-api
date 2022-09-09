@@ -52,6 +52,7 @@ public class OpenApiConfig {
 
     @Bean
     public ForwardedHeaderFilter forwardedHeaderFilter() {
-        return new ForwardedHeaderFilter();
+        ForwardedHeaderFilter forwardedHeaderFilter = new ForwardedHeaderFilter();
+        return forwardedHeaderFilter;
     }
 }
