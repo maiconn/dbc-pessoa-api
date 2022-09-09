@@ -30,7 +30,10 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
+//        Server server = new Server();
+//        server.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
         return new OpenAPI()
+//                .addServersItem(server)
                 .paths(new Paths())
                 .info(new Info().title("Pessoa API")
                         .description("Pessoa API documentação")
