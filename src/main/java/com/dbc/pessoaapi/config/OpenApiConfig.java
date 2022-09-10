@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 
 
@@ -36,17 +33,7 @@ public class OpenApiConfig {
     private String activeProfile;
 
     @GetMapping(value = "/")
-    public void index(HttpServletResponse response, HttpServletRequest request) throws IOException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        Enumeration<String> headerNames = httpRequest.getHeaderNames();
-
-        if (headerNames != null) {
-            while (headerNames.hasMoreElements()) {
-                String headerName = headerNames.nextElement();
-                System.out.print(headerName + " => ");
-                System.out.println("" + httpRequest.getHeader(headerName));
-            }
-        }
+    public void index(HttpServletResponse response) throws IOException {
         response.sendRedirect(getURL() + "/swagger-ui/index.html");
     }
 
@@ -59,9 +46,10 @@ public class OpenApiConfig {
     }
 
     @Bean
-    public OpenAPI springShopOpenAPI(ServletContext servletContext) {
+    public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
-        return new OpenAPI().servers(List.of(new Server().url(getURL())))
+        return new OpenAPI()
+                .servers(List.of(new Server().url(getURL())))
                 .paths(new Paths())
                 .info(new Info().title(appName)
                         .description("Documentação " + appName)
