@@ -32,20 +32,26 @@ public class OpenApiConfig {
         response.sendRedirect("/swagger-ui/index.html");
     }
 
-    @Value("${server.port}")
-    private String serverPort;
+    @Value("${spring.application.name}")
+    private String appName;
+
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
 
     @Bean
-    public OpenAPI springShopOpenAPI() {
+    public OpenAPI springShopOpenAPI(ServletContext servletContext) {
         String securitySchemeName = "bearerAuth";
-        Server server1 = new Server();
-        server1.setUrl("http://localhost:" + serverPort + "/");
-        server1.setDescription("LOCAL");
-        Server server2 = new Server();
-        server2.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
-        server2.setDescription("PRD");
+        Server server = new Server();
+        if ("Unknown".equals(activeProfile)) {
+            server.setUrl(servletContext.getContextPath());
+        } else {
+            server.setUrl(servletContext.getContextPath() + "/" + appName);
+        }
+//        Server server2 = new Server();
+//        server2.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
+//        server2.setDescription("PRD");
         return new OpenAPI()
-                .servers(List.of(server1, server2))
+                .servers(List.of(server))
                 .paths(new Paths())
                 .info(new Info().title("Pessoa API")
                         .description("Pessoa API documentação")
