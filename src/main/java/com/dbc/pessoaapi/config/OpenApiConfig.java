@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +32,20 @@ public class OpenApiConfig {
         response.sendRedirect("/swagger-ui/index.html");
     }
 
+    @Value("${server.port}")
+    private String serverPort;
+
     @Bean
-    public OpenAPI springShopOpenAPI(ServletContext servletContext) {
+    public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
-//        Server server = new Server();
-//        server.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
-        Server server = new Server().url(servletContext.getContextPath());
+        Server server1 = new Server();
+        server1.setUrl("http://localhost:" + serverPort + "/");
+        server1.setDescription("LOCAL");
+        Server server2 = new Server();
+        server2.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
+        server2.setDescription("PRD");
         return new OpenAPI()
-                .servers(List.of(server))
+                .servers(List.of(server1, server2))
                 .paths(new Paths())
                 .info(new Info().title("Pessoa API")
                         .description("Pessoa API documentação")
