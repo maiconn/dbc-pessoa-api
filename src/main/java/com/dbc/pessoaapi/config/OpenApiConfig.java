@@ -47,9 +47,6 @@ public class OpenApiConfig {
         } else {
             server.setUrl(servletContext.getContextPath() + "/" + appName);
         }
-//        Server server2 = new Server();
-//        server2.setUrl("http://vemser-dbc.dbccompany.com.br:39000/dbc-pessoa-api/");
-//        server2.setDescription("PRD");
         return new OpenAPI()
                 .servers(List.of(server))
                 .paths(new Paths())
