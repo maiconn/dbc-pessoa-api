@@ -25,22 +25,22 @@ public class OpenApiConfig {
     @Value("${spring.application.name}")
     private String appName;
 
-//    @Value("${spring.profiles.active:Unknown}")
-//    private String activeProfile;
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
 
-//    private String getURL() {
-//        if ("hml".equals(activeProfile)) {
-//            return "/" + appName;
-//        } else {
-//            return "";
-//        }
-//    }
+    private String getURL() {
+        if ("hml".equals(activeProfile)) {
+            return "/" + appName;
+        } else {
+            return "";
+        }
+    }
 
     @Bean
     public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .servers(List.of(new Server().url("/")))
+                .servers(List.of(new Server().url(getURL())))
                 .paths(new Paths())
                 .info(new Info().title(appName)
                         .description("Documentação " + appName)
