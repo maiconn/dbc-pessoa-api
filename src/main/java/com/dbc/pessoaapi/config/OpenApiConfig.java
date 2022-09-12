@@ -40,7 +40,7 @@ public class OpenApiConfig {
     public OpenAPI springShopOpenAPI() {
         String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-//                .servers(List.of(new Server().url(getURL())))
+                .servers(List.of(new Server().url("/")))
                 .paths(new Paths())
                 .info(new Info().title(appName)
                         .description("Documentação " + appName)
