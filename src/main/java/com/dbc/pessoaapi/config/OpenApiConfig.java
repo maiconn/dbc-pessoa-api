@@ -12,14 +12,10 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
-
 
 @Hidden
 @Configuration
@@ -31,11 +27,6 @@ public class OpenApiConfig {
 
     @Value("${spring.profiles.active:Unknown}")
     private String activeProfile;
-
-    @GetMapping(value = "/")
-    public void index(HttpServletResponse response) throws IOException {
-        response.sendRedirect(getURL() + "/swagger-ui/index.html");
-    }
 
     private String getURL() {
         if ("hml".equals(activeProfile)) {
@@ -68,10 +59,8 @@ public class OpenApiConfig {
                 );
     }
 
-
     @Bean
     public ForwardedHeaderFilter forwardedHeaderFilter() {
-        ForwardedHeaderFilter forwardedHeaderFilter = new ForwardedHeaderFilter();
-        return forwardedHeaderFilter;
+        return new ForwardedHeaderFilter();
     }
 }
