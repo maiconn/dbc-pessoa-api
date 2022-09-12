@@ -150,27 +150,27 @@ CREATE SEQUENCE seq_endereco_contato
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 1, 'Rua José Dos Santos', 120, 'casa', '88080700', 'Florianópolis', 'SC', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 0, 'Rua José Dos Santos', 120, 'casa', '88080700', 'Florianópolis', 'SC', 'Brasil');
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 2, 'Rua Pedro Canvas', 800, 'apto 2', '88805500', 'Porto Alegre', 'RS', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 1, 'Rua Pedro Canvas', 800, 'apto 2', '88805500', 'Porto Alegre', 'RS', 'Brasil');
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 1, 'Rua Pedro Fantin', 800, 'apt 52', '88080700', 'Florianópolis', 'SC', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 0, 'Rua Pedro Fantin', 800, 'apt 52', '88080700', 'Florianópolis', 'SC', 'Brasil');
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 1, 'Rua Mario Quintana', 50, NULL, '88805800', 'Santos', 'SP', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 0, 'Rua Mario Quintana', 50, NULL, '88805800', 'Santos', 'SP', 'Brasil');
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 2, 'Avenida Brasil', 1855, NULL, '88754566', 'Rio De Janeiro', 'RJ', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 1, 'Avenida Brasil', 1855, NULL, '88754566', 'Rio De Janeiro', 'RJ', 'Brasil');
 
 INSERT INTO ENDERECO_PESSOA
 (ID_ENDERECO, TIPO, LOGRADOURO, NUMERO, COMPLEMENTO, CEP, CIDADE, ESTADO, PAIS)
-VALUES(seq_endereco_contato.nextval, 1, 'Avenida Luis Carvalho', 444, NULL, '88987788', 'Rio De Janeiro', 'RJ', 'Brasil');
+VALUES(seq_endereco_contato.nextval, 0, 'Avenida Luis Carvalho', 444, NULL, '88987788', 'Rio De Janeiro', 'RJ', 'Brasil');
 
 
 CREATE TABLE Pessoa_X_Pessoa_Endereco (
